@@ -1,0 +1,137 @@
+
+module type OrderedSig = sig
+  type t
+  val eq: t -> t -> bool
+  val lt: t -> t -> bool
+  val leq: t -> t -> bool
+end
+
+module Int: (OrderedSig with type t=int) = struct
+  type t = int
+  let eq (i1:int)(i2:int):bool = (i1=i2)
+  let lt (i1:int)(i2:int):bool = (i1<i2)
+  let leq (i1:int)(i2:int):bool = (i1<i2) || (i1=i2)
+end
+  
+module type RedBlackSetSig = sig
+  type elem
+  type color = R | B
+  type t = E | T of color * t * elem * t (*Set*)
+
+  val empty: t
+  val insert: elem -> t -> t
+  val member: elem -> t -> bool
+  val isRedBlackTree: t -> bool
+end
+
+module RedBlackTree (O:OrderedSig): (RedBlackSetSig with type elem = O.t)= struct
+  type elem = O.t
+  type color = R | B
+  type t = E | T of color * t * elem * t
+
+  let empty = E
+  let balance (col:color)(left:t)(element:elem)(right:t):t =
+    match col, left, element, right with
+    | B, T (R, T (R,a,x,b),y,c), z, d ->
+       T (R, T (B,a,x,b),y ,T (B, c,z,d))
+    | B, T (R,a,x,T (R,b,y,c)),z,d ->
+       T (R, T (B,a,x,b),y ,T (B, c,z,d))
+    | B, a, x, T (R, T (R,b,y,c),z,d) ->
+       T (R, T (B,a,x,b),y ,T (B, c,z,d))
+    | B, a, x, T (R,b,y,T (R,c,z,d)) ->
+       T (R, T (B,a,x,b),y ,T (B, c,z,d))
+    | _ -> T (col, left, element, right)
+    
+  let insert (element:elem)(set:t): t=
+    let rec ins (someset:t) =
+      match someset with
+      | E -> T (R, E, element, E)
+      | T (col, left, el, right) ->
+	 if O.lt element el then balance col (ins left) el right
+	 else if O.lt el element then balance col left el (ins right)
+	 else someset
+    in
+    let T (_, l, elemental, r) = ins set
+    in T(B, l, elemental, r)
+
+  let rec member (element:elem)(set:t):bool=
+    match set with
+    | E -> false
+    | T (col, left, el, right) ->
+       if O.lt element el then member element left
+       else if O.lt el element then member element right
+       else true
+  (*if invariant 1 violated, return true*)
+  let check_inv1 (p_col:color)(c_col:color):bool =
+    match p_col, c_col with
+    | R, R -> true
+    | _, _ -> false
+
+  let check_if_leaf (sometree:t):bool =
+    match sometree with
+    | E -> true
+    | _ -> false
+  
+  (* 
+Invariants:
+1. no red node has a red child
+2. all paths from root have same number of black nodes
+  *)
+  (*have two accumulators, which adds up all black nodes in left
+  and all the black nodes in right. If numbers are different, record 
+    if last node was a red or not. The side that ended on a red add 1*)
+
+
+       
+  let isRedBlackTree (st: t ) : bool= 
+    let rec rbcheck (tree:t):bool =
+      match tree with
+      | E ->  true
+      | T (col, left, el, right) ->
+	 match left, right with
+	 | E, E -> true
+	 | E, T(r_col, r_left, r_el, r_right) ->
+	    if r_col = B || (check_inv1 col r_col) then false
+	    else
+	      (match r_left, r_right with
+	      |E, E -> true
+	      |_, _ -> false
+	      )
+	 | T (l_col, l_left, l_el, l_right), E ->
+	    if l_col = B || (check_inv1 col l_col) then false
+	    else
+	      (match l_left, l_right with
+	      |E, E -> true
+	      |_, _ -> false
+	      )
+	 | T (l_col, l_left, l_el, l_right), T(r_col, r_left, r_el, r_right) ->
+	    if (check_inv1 col l_col) || (check_inv1 col r_col) then false
+	    else
+	      
+    in
+    rbcheck st	    
+end
+  
+module RBTI = RedBlackTree(Int)	     
+
+let s1 = RBTI.empty
+let s2 = RBTI.insert 20 s1
+let s3 = RBTI.insert 30 s2
+let s4 = RBTI.insert 10 s3
+let s5 = RBTI.insert 40 s4
+let s6 = RBTI.insert 40 s5
+let s7 = RBTI.insert 15 s6
+let s8 = RBTI.insert 50 s7
+let s9 = RBTI.insert 50 s8
+ let s10 = RBTI.insert 35 s9
+  
+  
+
+let b1 = RBTI.member 30 s5
+let b2 = RBTI.member 30 s1
+
+let ir1 = RBTI.isRedBlackTree s1
+let ir2 = RBTI.isRedBlackTree s2
+let ir2 = RBTI.isRedBlackTree s3
+  
+      

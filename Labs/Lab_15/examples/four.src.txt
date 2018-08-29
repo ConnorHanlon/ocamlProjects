@@ -1,0 +1,7 @@
+function double_int(x : int) =
+    x * 2;
+
+function double_array(arr : int[]) =
+    map(double_int, arr);
+
+double_array([1, 2, 3, 4])

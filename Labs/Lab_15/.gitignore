@@ -1,0 +1,8 @@
+.*
+!.gitignore
+!.merlin
+
+_build/
+compiler.byte
+compiler.native
+out/

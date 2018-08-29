@@ -1,0 +1,10 @@
+open Interval
+
+module Rational_interval : () = struct
+  type t = (int * int)
+  let compare = compare
+  let to_string = frcs
+end
+
+module rationalInterval = Make_Interval(Rational_interval)
+  

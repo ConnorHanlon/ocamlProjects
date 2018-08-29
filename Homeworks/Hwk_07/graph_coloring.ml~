@@ -1,0 +1,22 @@
+(*The code below is included in Hwk_07 and
+is not the work of Connor Hanlon
+*)
+
+type node = N of int
+type edge = node * node
+type graph = node list * edge list
+
+type color = C of int
+type coloring = (node * color) list
+
+let g1 = ( [N 1; N 2; N 3; N 4], [ (N 1, N 2); (N 1, N 3); (N 2, N3); (N 3, N 4) ] )
+let g1_coloring = [ (N 1, C 1); (N 2, C2); (N 3, C 3); (N 4, C 2) ]
+
+(* The code below was written by Connor Hanlon*)
+let option = None
+		|Some of 'a
+		    
+		    
+let color_option (g: graph): color option =
+  Some 2
+    

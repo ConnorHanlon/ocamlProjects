@@ -1,0 +1,28 @@
+(*Code below was included with homework and
+  not written by Connor Hanlon*)
+
+type operation = Fill4GallonJugFromTap
+               | Fill3GallonJugFromTap
+               | Empty4GallonJugOnGround
+               | Empty3GallonJugOnGround
+               | Fill4GallonJugFrom3GallonJug
+               | Fill3GallonJugFrom4GallonJug
+               | Empty4GallonJugInto3GallonJug
+               | Empty3GallonJugInto4GallonJug
+
+
+let describe (four:int) (three:int) : string = 
+  let describe' jug amount =
+    "The " ^ string_of_int jug ^ " gallon jug " ^
+      match amount with
+      | 0 -> " is empty"
+      | 1 -> " contains 1 gallon"
+      | x -> " contains " ^ string_of_int x ^ " gallons"
+  in
+  describe' 4 four ^ ", " ^ describe' 3 three ^ "."
+
+(* Code below is by Connor Hanlon*)
+type state = int * int
+  let ok_state (s : state):
+let play (): (operation * string) list option =
+  let do_op (some_opt: operation)((four,three):state)

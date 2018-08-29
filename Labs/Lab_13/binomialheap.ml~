@@ -1,0 +1,30 @@
+
+module type OrderedSig = sig
+  type t
+  val eq: t -> t -> bool
+  val lt: t -> t -> bool
+  val leq: t -> t -> bool
+end
+
+
+module Int: OrderedSig = struct
+  type t = int
+  let eq (i1:int)(i2:int):bool = (i1=i2)
+  let lt (i1:int)(i2:int):bool = (i1<i2)
+  let leq (i1:int)(i2:int):bool = (i1<i2) || (i1=i2)
+end
+  
+
+module type BinomialHeapSig = sig
+  type elem
+  type tree = Node of int * elem * tree list
+  type t = tree list
+  val empty: t
+  val isEmpty: t->bool
+  val insert: elem -> t -> t
+  val merge: t -> t -> t
+  val findMin: t -> elem
+  val deleteMin: t -> t
+end
+  
+    

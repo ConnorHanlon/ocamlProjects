@@ -1,0 +1,9 @@
+let circle_circum_v1 : float -> float = fun r -> 2. *. 3.1415 *. r;;
+
+let circle_circum_v2 r = let pi = 3.1415 in 2. *. pi *. r;;
+
+let rec product xs =
+  match xs with
+  | [] -> 0
+  | x::rest -> x * product rest
+;;

@@ -1,0 +1,118 @@
+Name: Connor Hanlon
+x500: hanlo047@umn.edu
+ID: 4714515
+
+sum [] = 0
+sum x::xs = x + sum xs
+
+take 0 lst = []
+take n [] = []
+take n (x::xs) = x :: take (n-1) xs
+
+evens_from 0 v = []
+evens_from n v = v + v :: evens_from (n-1) (v+1)
+
+evaluate sum (take 3 (evens_from 5 1))
+
+CALL BY VALUE
+  sum (take 3 (evens_from 5 1))
+= sum (take 3 ((5+5) :: evens_from (5-1) (1+1)))
+= sum (take 3 ((5+5) :: evens_from 4 (1+1)))
+= sum (take 3 ((5+5) :: evens_from 4 2))
+= sum (take 3 ((5+5) :: (4+4) :: evens_from (4-1) (2+1)))
+= sum (take 3 ((5+5) :: (4+4) :: evens_from 3 (2+1)))
+= sum (take 3 ((5+5) :: (4+4) :: evens_from 3 3))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: evens_from (3-1) (3+1)))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: evens_from 2 (3+1)))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: evens_from 2 4))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: evens_from (2-1) (4+1)))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: evens_from 1 (4+1)))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: evens_from 1 5))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: (1+1) :: evens_from (1-1) (5+1)))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: (1+1) :: evens_from 0 (5+1)))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: (1+1) :: evens_from 0 6))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: (1+1) :: [] ))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: (2+2) :: 2 :: []))
+= sum (take 3 ((5+5) :: (4+4) :: (3+3) :: 4 :: 2 :: []))
+= sum (take 3 ((5+5) :: (4+4) :: 6 :: 4 :: 2 :: []))
+= sum (take 3 ((5+5) :: 8 :: 6 :: 4 :: 2 :: []))
+= sum (take 3 (10 :: 8 :: 6 :: 4 :: 2 :: []))
+= sum (10 :: take (3-1) (8 :: 6 :: 4 :: 2 :: []))
+= sum (10 :: take 2 (8 :: 6 :: 4 :: 2 :: []))
+= sum (10 :: 8 :: take (2-1) (6 :: 4 :: 2 :: []))
+= sum (10 :: 8 :: take 1 (6 :: 4 :: 2 :: []))
+= sum (10 :: 8 :: 6 :: take (1-1) (4 :: 2 :: []))
+= sum (10 :: 8 :: 6 :: take 0 (4 :: 2 :: []))
+= sum (10 :: 8 :: 6 :: [])
+= 10 + sum (8 :: 6 :: [])
+= 10 + 8 + sum (6 :: [])
+= 10 + 8 + 6 + sum ([])
+= 10 + 8 + 6 + 0
+= 18 + 6 + 0
+= 24 + 0
+= 24
+
+CALL BY NAME
+  sum (take 3 (evens_from 5 1))
+= sum (take 3 ((5+5) :: evens_from (5-1) (1+1) ))
+= sum ((5+5) :: take (3-1) (evens_from (5-1) (1+1) ))
+= (5+5) + sum (take (3-1) (evens_from (5-1) (1+1) ))
+= 10 + sum (take (3-1) (evens_from (5-1) (1+1) ))
+= 10 + sum (take 2 (evens_from (5-1) (1+1) ))
+= 10 + sum (take 2 (evens_from 4 (1+1) ))
+= 10 + sum (take 2 ((4+4) :: evens_from (4-1) ((1+1)+1) ))
+= 10 + sum ((4+4) :: take (2-1) (evens_from (4-1) ((1+1)+1) ))
+= 10 + (4+4) + sum (take (2-1) (evens_from (4-1) ((1+1)+1) ))
+= 10 + 8 + sum (take (2-1) (evens_from (4-1) ((1+1)+1) ))
+= 18 + sum (take (2-1) (evens_from (4-1) ((1+1)+1) ))
+= 18 + sum (take 1 (evens_from (4-1) ((1+1)+1) ))
+= 18 + sum (take 1 (evens_from 3 ((1+1)+1) ))
+= 18 + sum (take 1 ((3+3) :: evens_from (3-1) (((1+1)+1)+1) ))
+= 18 + sum ((3+3) :: take (1-1) (evens_from (3-1) (((1+1)+1)+1) ))
+= 18 + (3+3) + sum (take (1-1) (evens_from (3-1) (((1+1)+1)+1) ))
+= 18 + 6 + sum (take (1-1) (evens_from (3-1) (((1+1)+1)+1) ))
+= 24 + sum (take (1-1) (evens_from (3-1) (((1+1)+1)+1) ))
+= 24 + sum (take 0 (evens_from (3-1) (((1+1)+1)+1) ))
+= 24 + sum ([])
+= 24 + 0
+= 24
+
+
+LAZY EVALUATION
+  sum (take 3 (evens_from 5 1))
+= sum (take 3 ((5+5) :: evens_from (5-1) (1+1) ))
+= sum (take 3 ((5+5) :: evens_from u v ))
+  where v = 1+1
+        u = 5-1
+= sum ((5+5) :: take (3-1) (evens_from u v ))
+= (5+5) + sum (take (3-1) (evens_from u v ))
+= 10 + sum (take (3-1) (evens_from u  ))
+= 10 + sum (take 2 (evens_from u v ))
+= 10 + sum (take 2 (evens_from 4 v ))
+  where v = 1+1
+= 10 + sum (take 2 ((4+4) :: evens_from u (v+1) )
+  where u = 4-1
+        v = 1+1
+= 10 + sum (take 2 ((4+4) :: evens_from u (v+1) )
+= 10 + sum ((4+4) :: take (2-1) (evens_from u (v+1) ))
+= 10 + (4+4) + sum (take (2-1) (evens_from u (v+1) ))
+= 10 + 8 + sum (take (2-1) (evens_from u (v+1) ))
+= (10 + 8) + sum (take (2-1) (evens_from u (v+1) ))
+= 18 + sum (take (2-1) (evens_from u (v+1) ))
+= 18 + sum (take 1 (evens_from u (v+1) ))
+= 18 + sum (take 1 (evens_from 3 (v+1) ))
+  where v = 1+1
+= 18 + sum (take 1 ((3+3) :: evens_from (3-1) (v+1)+1) ))
+= 18 + sum (take 1 ((3+3) :: evens_from u (x+1) ))
+  where u = 3-1
+        v = 1+1
+        x = v+1
+= 18 + sum ((3+3) :: take (1-1) (evens_from u (x+1) ))
+= 18 + (3+3) + sum (take (1-1) (evens_from u (x+1) ))
+= 18 + 6 + sum (take (1-1) (evens_from u (x+1) ))
+= (18 + 6) + sum (take (1-1) (evens_from u (x+1) ))
+= 24 + sum (take (1-1) (evens_from u (x+1) ))
+= 24 + sum (take 0 (evens_from u (x+1) ))
+= 24 + sum ([])
+= 24 + 0
+= 24

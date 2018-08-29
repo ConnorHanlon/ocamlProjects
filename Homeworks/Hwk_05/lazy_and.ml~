@@ -1,0 +1,10 @@
+let terminator b1 b2 =
+  match b1 with
+  | true -> b2
+  | _ -> false
+ 
+
+let rec ands (bl : bool list) : bool =
+  foldr terminator bl true
+
+    

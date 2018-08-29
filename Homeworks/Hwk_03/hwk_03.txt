@@ -1,0 +1,289 @@
+	Question 1:
+let rec power n x= match n with
+    |0->1.0
+    |_->x*.power(n-1) x
+
+Show: power n x = x^n
+
+Base Case:
+     p(n=0): power 0 x = x^0
+
+     power 0 x
+=1.0
+by def of power
+   x^0
+=1.0
+by understanding of multiplication and powers
+Therefore, 1.0 = 1.0 true
+
+Inductive Case:
+Inductive Hypothesis:	power n x = x ^ n
+Prove:	  power (n+1) x = x ^ (n+1)
+
+	power (n+1) x
+=x *. power n x
+by def of power
+=x *. (x^n)
+by inductive hypothesis
+=x^(n+1)
+by understanding of multiplication and powers
+
+
+   Question 2:
+type nat = Zero | Succ of nat
+let toInt = function
+    |Zero->0
+    |Succ n-> toInt n + 1
+let rec power n x = match n with
+    |Zero -> 1.0
+    |Succ n' -> x*.power n' x
+
+Show: power n x = x^(toInt n)
+
+Base Case:
+     p(Zero): power Zero x = x^(toInt Zero)
+
+     power Zero x
+=1.0
+by def of power
+= x^(0)
+by understanding of powers and multiplication
+=x^(toInt Zero)
+by def of toInt
+
+Inductive Case:
+Inductive Hypothesis:	power Succ n x = x^(toInt Succ n)
+Prove:	  power (Succ(Succ n)) x = x^(toInt Succ n)
+
+	  power (Succ(Succ n)) x
+= x*.power (Succ n) x
+by def of power
+= x*. x^(toInt Succ n)
+by inductive hypothesis
+=x^((toInt (Succ n)) + 1)
+by properties of multiplication and powers
+=x^(toInt (Succ(Succ n)))
+by def of toInt
+
+
+       Question 3
+let rec reverse l = match l with
+    |[]->[]
+    |(h::t)->append(reverse t) [h]
+let rec append l1 l2 = match l1 with
+    |[]->l2
+    |(h::t)->h::(append t l2)
+
+Prove Append:
+ Base Case: P([]) -> append [] l2 = l2
+
+ append [] l2
+=l2
+by def of append
+
+Inductive Case:
+Inductive Hypothesis: p(l1)-> append l1 l2 = l1 @ l2
+Prove: append (x::xs) l2 = (x::xs)@l2
+
+ append (x::xs) l2
+= x::(append xs l2)
+by def append
+= x::(x@l2)
+by inductive hypothesis
+=(x::xs)@l2
+by understanding of lists and concat
+
+Prove Reverse:
+Base Case: P([x]) -> reverse [x] = [x]
+
+(*Answer:
+Lemma 1
+	P[L] = append l [] = l
+
+	Base Case:
+	p([]) = append [] [] = []
+
+	append [] [] = [] def append
+
+	Inductive Case:
+	IH: P(xs) -> append xs [] = xs
+
+	P(x::xs) -> append x::xs [] = x::xs
+
+	append x::xs []		= x::xs
+	x :: (append xs [])= by append defn
+	x :: (xs)					= by inductive hypothesis
+	x :: xs						= x::xs
+
+Base case:
+P([]) -> reverse (append [] l2) = append (reverse l2) (reverse [])
+
+reverse (append [] l2) = append (reverse l2) (reverse [])
+reverse l2						=
+											= append (reverse l2) []
+reverse l2						= reverse l2
+
+
+*)
+ reverse [x]
+=append (reverse []) [x]
+by def reverse
+= append ([]) [x]
+by def reverse
+= [x]
+by def append
+
+Inductive Case:
+Inductive Hypothesis: P(L1) -> reverse (append l1 l2) = append (reverse l2) (reverse l1)
+Show: reverse (append (x::xs) l2) = append (reverse l2) (reverse (x::xs))
+
+ reverse (append (x::xs) l2)
+= reverse x::(append xs l2)
+by def append
+=append reverse (append xs l2) [x]
+by def reverse
+= append (append (reverse l2) (reverse xs)) [x]
+by inductive hypothesis
+= (reverse l2) :: (append (reverse xs) [x])
+by def append
+= (reverse l2) :: (reverse x::xs)
+by def reverse
+= append (reverse l2) (reverse x::xs)
+by def append
+
+
+       Question 4
+let isupper c = Char.code c >= Char.code 'A' && Char.code c <= Char.code 'Z'
+let rec someupper lst = match lst with
+    |[]->false
+    |x::xs->isupper x || someupper xs
+
+Base Case:
+P([]) -> someupper [] = false
+
+ someupper []
+= false
+by def someupper
+
+Inductive Case:
+Inductive Hypothesis: someupper (l1@l2) = someupper l1 || someupper l2
+SHow: someupper ((x::xs)@l2) = someupper (x::xs) || someupper l2
+
+ someupper ((x::xs) @ l2))
+= someupper (x::(xs@l2))
+by understanding of append and lists
+= isupper x || someupper (xs@l2)
+by def someupper
+= isupper x || (someupper xs || someupper l2)
+by inductive hypothesis
+= (isupper x || someupper xs) || someupper l2
+by arithmetic and understanding of or
+= someupper (x::xs) || someupper l2
+by def of someupper
+
+
+       Question 5
+let rec foldr (f:'a->'b->'b) (l:'a list)(v:'b): 'b=
+    match l with
+    |[]->v
+    |x::xs-> f x (foldr f xs v)
+
+let upperor c b = isupper c || b
+let foldupper lst = foldr upperor lst false
+
+Base Case:
+p([])-> someupper [] = foldupper []
+
+ someupper []
+= false
+by def of someupper
+ foldupper []
+=foldr upperor [] false
+by def of foldupper
+= false
+by def of foldr
+
+Inductive Case:
+Inductive Hypothesis: someupper chs = foldupper chs
+Show : someupper x::xs = foldupper x::xs
+
+ someupper x::xs
+= isupper x || (someupper xs)
+by def someupper
+= isupper x || foldupper xs
+by inductive hypothesis
+= upperor x (foldupper xs)
+by def upperor
+= upperor x (foldr upperor xs false)
+by def foldupper
+= foldr upperor (x::xs) false
+by def foldr
+= foldupper x::xs
+by def foldupper
+
+
+	Question 6
+type 'a tree = Leaf of 'a
+     	     |Branch of 'a tree * 'a tree
+
+let min x y = if x < y then x else y
+let rec mintree t = match t with
+    |Leaf v -> v
+    |Branch (t1, t2) -> min (mintree t1) (mintree t2)
+
+let rec tfold (l:'a->'b) (f:'b->'b->'b) (t:'a tree): 'b = match t with
+    |Leaf v -> l v
+    | Branch (t1, t2) -> f (tfold l f t1) (tfold l f t2)
+
+let fold_mintree t = tfold (fun x->x) min t
+
+Prove mintree t:
+Base Case:
+mintree (Leaf x) = x
+ mintree (Leaf x)
+= x
+by def mintree
+
+Inductive CAse:
+Inductive Hypothesis: mintree (Branch (leaf x, leaf y)) = min x y
+Show: mintree (Branch (Branch (Leaf a, Leaf b), Leaf c)) = min (min a b) c
+
+ mintree (Branch (Branch (Leaf a, Leaf b), Leaf c))
+= min (mintree Branch (leaf a, Leaf b)) (mintree Leaf c)
+by def mintree
+= min (min a b) c
+by inductive hypothesis
+
+Prove: mintree t = fold_mintree t
+Base Case:
+mintree Leaf x = fold_mintree x
+
+-> fold_mintree x = mintree Leaf x
+by arithmetic
+
+ fold_mintree x
+= tfold (fun x-> x) min (Leaf x)
+by def fold_mintree
+= (fun x-> x) x
+by def tfold
+= mintree (Leaf x)
+by def mintree
+
+Inductive Case:
+Inductive Hypothesis: mintree t = fold_mintree t
+Show: mintree (Branch(Leaf x, Leaf y)) = fold_mintree (Branch (Leaf x, Leaf y))
+
+-> fold_mintree (Branch (Leaf x, Leaf y)) = mintree (Branch(Leaf x, Leaf y))
+by arithmetic
+
+ fold_mintree (Branch(Leaf x, Leaf y))
+= tfold (fun x->x) min (Branch(Leaf x, Leaf y))
+by def fold_mintree
+= min (tfold (fun x-> x) min (Leaf x)) (tfold (fun x-> x) min (Leaf y))
+by def tfold
+= min (fold_mintree (Leaf x)) (fold_mintree (Leaf y))
+by def fold_mintree
+= min (mintree Leaf x) (mintree Leaf y)
+by inductive hypothesis
+= mintree (Branch (Leaf x, Leaf y))
+by def mintree
